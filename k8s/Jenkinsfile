@@ -9,7 +9,6 @@ pipeline {
         IMAGE_NAME = "hitfast/multibranch-app"
         GIT_USER = "social9009"
         GIT_EMAIL = "akshaysawant9009@gmail.com"
-        IMAGE_TAG = ""
     }
 
     stages {
@@ -34,9 +33,9 @@ pipeline {
                 )]) {
 
                     sh """
-                        docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                        docker build -t ${IMAGE_NAME}:${env.IMAGE_TAG} .
                         echo \$DOCKER_PASSWORD | docker login -u \$DOCKERHUB_USER --password-stdin
-                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${IMAGE_NAME}:${env.IMAGE_TAG}
                         docker logout
                     """
                 }
@@ -62,11 +61,11 @@ pipeline {
                             git checkout main
                             git reset --hard origin/main
 
-                            sed -i "s|image:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" k8s/deploy.yaml
+                            sed -i "s|image:.*|image: ${IMAGE_NAME}:${env.IMAGE_TAG}|" k8s/deploy.yaml
 
                             git add k8s/deploy.yaml
 
-                            git diff --cached --quiet || git commit -m "Update Image to ${IMAGE_TAG}"
+                            git diff --cached --quiet || git commit -m "Update Image to ${env.IMAGE_TAG}"
 
                             git push https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/social9009/multi-Branch-pipeline.git main
                         """
@@ -76,4 +75,3 @@ pipeline {
         }
     }
 }
-

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: movie-app
-        image: hitfast/multibranch-app:latest
+        image: hitfast/multibranch-app:build-6
         ports:
         - containerPort: 5000
 
